@@ -1,5 +1,24 @@
 import express from "express";
+import DataBaseConnectionHandler from "./infra/db/settings/connection";
+import { IDataBaseConnection } from './infra/db/settings/connection';
 
+require("dotenv").config();
+
+
+async function connectDatabase(){
+	const connectionData: IDataBaseConnection = {
+		databaseName: "Alura",
+		host: "localhost",
+		port: 27017,
+		username: process.env.MONGO_INITDB_ROOT_USERNAME,
+		password: process.env.MONGO_INITDB_ROOT_PASSWORD
+	} 
+	const database = new DataBaseConnectionHandler(connectionData)
+	await database.createDataBaseConnection()
+	return database
+}
+
+connectDatabase()
 const app = express();
 app.use(express.json())
 
