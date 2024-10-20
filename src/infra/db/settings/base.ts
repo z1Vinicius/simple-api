@@ -1,9 +1,9 @@
 import DataBaseConnectionHandler from "./connection";
 import { IDataBaseConnection } from './connection';
-require("dotenv").config();
+import "dotenv/config"
 
 const connectionData: IDataBaseConnection = {
-  databaseName: "Alura",
+  databaseName: "library",
   host: "localhost",
   port: 27017,
   username: process.env.MONGO_INITDB_ROOT_USERNAME,

@@ -2,6 +2,7 @@ import express from "express";
 import connection from "./infra/db/settings/base";
 import bookModel from "./infra/models/book";
 
+connection
 const app = express();
 app.use(express.json())
 
