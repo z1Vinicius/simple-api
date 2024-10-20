@@ -23,23 +23,23 @@ class DataBaseConnectionHandler {
     this.port = connectionData.port;
     this.databaseName = connectionData.databaseName;
     this.connectionUrl = this.getConnectionUrl(); 
+    this.enableConnectionEvents(); 
   }
 
   private getConnectionUrl(): string {
     return `mongodb://${this.username}:${this.password}@${this.host}:${this.port}/${this.databaseName}?authSource=admin`;
   }
   
+  public async getConnection(): Promise<mongoose.Connection>{
+    return mongoose.connection
+  }
+
   public async createDataBaseConnection(): Promise<void> {
     try {
-      this.enableConnectionEvents(); 
       await mongoose.connect(this.connectionUrl);
     } catch (error) {
       console.error("Erro ao conectar ao MongoDB:", error);
     }
-  }
-  
-  public async getConnection(): Promise<mongoose.Connection>{
-    return mongoose.connection
   }
 
   private enableConnectionEvents() {
