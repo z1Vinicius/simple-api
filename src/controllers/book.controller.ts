@@ -31,7 +31,8 @@ class BookController {
 	static async createBook(req: Request, res: Response): Promise<void> {
 		try {
 			const author = await authorModel.findById(req.body.author);
-			const book = await bookModel.create({ ...req.body, author: author });
+			const book = new bookModel({ ...req.body, author: author });
+			await book.save();
 			res.status(200).json(book);
 		} catch (error) {
 			res.status(500).json({ message: `Error to create book - ${error.message}` });
