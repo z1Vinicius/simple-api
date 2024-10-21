@@ -1,4 +1,5 @@
 import { Request, Response } from "express"; // Importe os tipos Request e Response
+import authorModel from "../infra/models/author";
 import bookModel from "../infra/models/book";
 
 class BookController {
@@ -23,7 +24,8 @@ class BookController {
 
 	static async createBook(req: Request, res: Response): Promise<void> {
 		try {
-			const book = await bookModel.create(req.body);
+			const author = await authorModel.findById(req.body.author);
+			const book = await bookModel.create({ ...req.body, author: author });
 			res.status(200).json(book);
 		} catch (error) {
 			res.status(500).json({ message: `Error to create book - ${error.message}` });
