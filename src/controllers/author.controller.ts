@@ -1,4 +1,4 @@
-import { Request, Response } from "express"; // Importe os tipos Request e Response
+import { NextFunction, Request, Response } from "express"; // Importe os tipos Request e Response
 import authorModel from "../infra/models/author";
 
 class AuthorController {
@@ -11,14 +11,14 @@ class AuthorController {
 		}
 	}
 
-	static async getAuthor(req: Request, res: Response): Promise<void> {
+	static async getAuthor(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const authorId = req.params.id;
 			const author = await authorModel.findById(authorId);
 			console.log(author);
 			res.status(200).json(author);
 		} catch (error) {
-			res.status(500).json({ message: `Error get Author - ${error.message}` });
+			next(error);
 		}
 	}
 
