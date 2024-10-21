@@ -5,7 +5,13 @@ import bookModel from "../infra/models/book";
 class BookController {
 	static async getBooks(req: Request, res: Response): Promise<void> {
 		try {
-			const allBooks = await bookModel.find({});
+			const id = req.query.id;
+			let allBooks = {};
+			if (id) {
+				allBooks = await bookModel.find({ _id: id });
+			} else {
+				allBooks = await bookModel.find({});
+			}
 			res.status(200).json(allBooks);
 		} catch (error) {
 			res.status(500).json({ message: `Error get all books - ${error.message}` });
