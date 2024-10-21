@@ -1,6 +1,8 @@
 import { Request, Response } from "express"; // Importe os tipos Request e Response
+import mongoose from "mongoose";
 import authorModel from "../infra/models/author";
 import bookModel from "../infra/models/book";
+import { sendErrorResponse } from "../utils/error_handler";
 
 class BookController {
 	static async getBooks(req: Request, res: Response): Promise<void> {
@@ -22,9 +24,18 @@ class BookController {
 		try {
 			const bookId = req.params.id;
 			const book = await bookModel.findById(bookId);
+			if (!book) {
+				const bookError = { code: "not_found", message: "Book not found", detailedMessage: `Not able to find a book with id: ${bookId}` };
+				sendErrorResponse(res, bookError, 404);
+			}
 			res.status(200).json(book);
 		} catch (error) {
-			res.status(500).json({ message: `Error get book - ${error.message}` });
+			if (error instanceof mongoose.Error.CastError) {
+				const bookError = { code: "bad_request", message: "Bad Request", detailedMessage: `Error to get book by a bad request: ${error}` };
+				sendErrorResponse(res, bookError, 400);
+			}
+			const bookError = { code: `internal_error`, message: "Interval Server Error", detailedMessage: `Error to get book by server error: ${error}` };
+			sendErrorResponse(res, bookError, 500);
 		}
 	}
 
