@@ -3,9 +3,10 @@ import BookController from "../controllers/book.controller";
 
 const routes = express.Router();
 
-routes.get("/books", BookController.getBooks);
-routes.get("/books/:id", BookController.getBook);
-routes.post("/books", BookController.createBook);
-routes.patch("/books/:id", BookController.updateBook);
+routes.get("/book", BookController.getBooks);
+routes.get("/book/:id", BookController.getBook);
+routes.post("/book", BookController.createBook);
+routes.put("/book/:id", BookController.updateBook);
+routes.delete("/book/:id", BookController.deleteBook);
 
 export default routes;
