@@ -3,7 +3,7 @@ import { authorSchema } from "./author";
 
 const bookSchema = new mongoose.Schema(
 	{
-		title: { type: String, required: true },
+		title: { type: String, required: [true, "O título do livro é obrigatório"] },
 		author: authorSchema,
 		publisher: { type: String },
 		pages: { type: Number },

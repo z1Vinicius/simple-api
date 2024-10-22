@@ -44,8 +44,8 @@ class AuthorController {
 	static async deleteAuthor(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const authorId = req.params.id;
-			const Author = await authorModel.findByIdAndDelete(authorId);
-			res.status(200).json(Author);
+			await authorModel.findByIdAndDelete(authorId);
+			res.status(200).json(authorId);
 		} catch (error) {
 			next(error);
 		}

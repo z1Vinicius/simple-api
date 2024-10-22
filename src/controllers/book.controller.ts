@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express"; // Importe os tipos Request e Response
+import mongoose from "mongoose";
 import authorModel from "../infra/models/author";
 import bookModel from "../infra/models/book";
 
@@ -47,6 +48,9 @@ class BookController {
 		try {
 			const bookId = req.params.id;
 			const author = await authorModel.findById(req.body.author);
+			if (!bookId || author) {
+				throw new mongoose.Error.ValidationError();
+			}
 			const book = await bookModel.findByIdAndUpdate(bookId, { ...req.body, author: author });
 			res.status(200).json(book);
 		} catch (error) {
@@ -56,8 +60,8 @@ class BookController {
 	static async deleteBook(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const bookId = req.params.id;
-			const book = await bookModel.findByIdAndDelete(bookId);
-			res.status(200).json(book);
+			await bookModel.findByIdAndDelete(bookId);
+			res.status(200).json(bookId);
 		} catch (error) {
 			next(error);
 		}
