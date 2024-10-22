@@ -3,7 +3,7 @@ import authorModel from "../infra/models/author";
 import bookModel from "../infra/models/book";
 
 class BookController {
-	static async getBooks(req: Request, res: Response): Promise<void> {
+	static async getBooks(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const id = req.query.id;
 			let allBooks = {};
@@ -14,7 +14,7 @@ class BookController {
 			}
 			res.status(200).json(allBooks);
 		} catch (error) {
-			res.status(500).json({ message: `Error get all books - ${error.message}` });
+			next(error);
 		}
 	}
 
@@ -32,33 +32,34 @@ class BookController {
 		}
 	}
 
-	static async createBook(req: Request, res: Response): Promise<void> {
+	static async createBook(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const author = await authorModel.findById(req.body.author);
 			const book = new bookModel({ ...req.body, author: author });
 			await book.save();
 			res.status(200).json(book);
 		} catch (error) {
-			res.status(500).json({ message: `Error to create book - ${error.message}` });
+			next(error);
 		}
 	}
 
-	static async updateBook(req: Request, res: Response): Promise<void> {
+	static async updateBook(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const bookId = req.params.id;
-			const book = await bookModel.findByIdAndUpdate(bookId, req.body);
+			const author = await authorModel.findById(req.body.author);
+			const book = await bookModel.findByIdAndUpdate(bookId, { ...req.body, author: author });
 			res.status(200).json(book);
 		} catch (error) {
-			res.status(500).json({ message: `Error to update book - ${error.message}` });
+			next(error);
 		}
 	}
-	static async deleteBook(req: Request, res: Response): Promise<void> {
+	static async deleteBook(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const bookId = req.params.id;
 			const book = await bookModel.findByIdAndDelete(bookId);
 			res.status(200).json(book);
 		} catch (error) {
-			res.status(500).json({ message: `Error to delete book - ${error.message}` });
+			next(error);
 		}
 	}
 }

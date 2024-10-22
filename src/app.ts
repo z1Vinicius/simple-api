@@ -5,9 +5,11 @@ import routes from "./routes";
 
 connection;
 const app = express();
-app.use(express.json());
+// app.use((req, res, next) => {
+// 	console.log("Nova requisição");
+// 	next();
+// });
 routes(app);
-
 app.use(ErrorHandler.handleError);
 
 export default app;

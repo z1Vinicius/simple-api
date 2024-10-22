@@ -21,6 +21,12 @@ class ErrorHandler {
 		if (error instanceof mongoose.Error.CastError) {
 			return ErrorHandler[ErrorTypes.MongooseCastError](error, res);
 		}
+		const errorData = {
+			code: ERROR_CODES.INTERNAL_ERROR,
+			message: ERROR_MESSAGES.INTERNAL_ERROR,
+			detailedMessage: `Invalid Data provided: ${error}`,
+		};
+		res.status(500).json(errorData);
 		next(error);
 	}
 

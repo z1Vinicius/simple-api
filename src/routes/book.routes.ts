@@ -1,6 +1,5 @@
 import express from "express";
 import BookController from "../controllers/book.controller";
-
 const routes = express.Router();
 
 routes.get("/book", BookController.getBooks);
