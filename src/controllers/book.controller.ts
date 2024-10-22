@@ -5,10 +5,19 @@ import { NotFoundError } from "../utils/customError";
 class BookController {
 	static async getBooks(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const id = req.query.id;
+			const { id, pages, price, publisher, title } = req.query;
+
+			const regex = new RegExp(publisher as string, "i");
+			const filterQuery: any = {};
+			if (id) filterQuery._id = id;
+			if (pages) filterQuery.pages = { $gte: pages };
+			if (price) filterQuery.price = price;
+			if (publisher) filterQuery.publisher = regex;
+			if (title) filterQuery.title = { $regex: title, $options: "i" };
+
 			let allBooks = {};
-			if (id) {
-				allBooks = await bookModel.find({ _id: id });
+			if (req.query) {
+				allBooks = await bookModel.find(filterQuery);
 			} else {
 				allBooks = await bookModel.find({});
 			}
