@@ -2,9 +2,9 @@ import "dotenv/config";
 import DataBaseConnectionHandler, { IDataBaseConnection } from "./connection";
 
 const connectionData: IDataBaseConnection = {
-	databaseName: "library",
-	host: "10.3.1.146",
-	port: 27017,
+	databaseName: process.env.MONGO_DATABASE_NAME,
+	host: process.env.MONGO_SERVER_HOST,
+	port: Number(process.env.MONGO_SERVER_PORT),
 	username: process.env.MONGO_INITDB_ROOT_USERNAME,
 	password: process.env.MONGO_INITDB_ROOT_PASSWORD,
 };

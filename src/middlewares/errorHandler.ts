@@ -17,7 +17,6 @@ const ERROR_MESSAGES = {
 
 class ErrorHandler {
 	static handleError(error: Error, req: Request, res: Response, next: NextFunction) {
-		// console.error(error);
 		if (error instanceof mongoose.Error.CastError) {
 			return ErrorHandler[ErrorTypes.MongooseCastError](error, res);
 		}
@@ -26,6 +25,7 @@ class ErrorHandler {
 			message: ERROR_MESSAGES.INTERNAL_ERROR,
 			detailedMessage: `Invalid Data provided: ${error}`,
 		};
+		console.error(error);
 		res.status(500).json(errorData);
 		next(error);
 	}
