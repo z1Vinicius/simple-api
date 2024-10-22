@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
+import { IErrorMessage } from "../types/error_handler";
 
 enum ErrorTypes {
 	MongooseCastError = "handleMongooseCastError",
@@ -26,7 +27,7 @@ class ErrorHandler {
 		if (error instanceof mongoose.Error.ValidationError) {
 			return ErrorHandler[ErrorTypes.MongooseCastValidationError](error, res);
 		}
-		const errorData = {
+		const errorData: IErrorMessage = {
 			code: ERROR_CODES.INTERNAL_ERROR,
 			message: ERROR_MESSAGES.INTERNAL_ERROR,
 			detailedMessage: `Invalid Data provided: ${error}`,
@@ -36,7 +37,7 @@ class ErrorHandler {
 	}
 
 	private static handleMongooseCastError(error: mongoose.Error.CastError, res: Response) {
-		const errorData = {
+		const errorData: IErrorMessage = {
 			code: ERROR_CODES.BAD_REQUEST,
 			message: ERROR_MESSAGES.INVALID_DATA_FORMAT,
 			detailedMessage: `Os dados passados são inválidos: ${error.value}`,
@@ -46,7 +47,7 @@ class ErrorHandler {
 
 	private static handleMongooseValidationError(error: mongoose.Error.ValidationError, res: Response) {
 		const errorMessage = Object.values(error.errors).map((error) => error.message);
-		const errorData = {
+		const errorData: IErrorMessage = {
 			code: ERROR_CODES.VALIDATION_ERROR,
 			message: ERROR_MESSAGES.INVALID_DATA_FORMAT,
 			detailedMessage: `Os dados passados são inválidos: ${errorMessage}`,

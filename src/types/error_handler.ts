@@ -2,10 +2,7 @@ interface IErrorMessage {
 	code: string;
 	message: string;
 	detailedMessage: string;
+	details?: string[];
 }
 
-interface IErrorMessageResponse extends IErrorMessage {
-	details?: IErrorMessage[];
-}
-
-export { IErrorMessage, IErrorMessageResponse };
+export { IErrorMessage };
