@@ -18,3 +18,11 @@ export class NotFoundError extends Error {
 		this.name = ERROR_CODES.NOT_FOUND;
 	}
 }
+
+export class MissingParamsError extends Error {
+	constructor(parameter: string) {
+		super();
+		this.message = `Parâmetro ${parameter} faltando`.trim();
+		this.name = ERROR_CODES.NOT_FOUND;
+	}
+}

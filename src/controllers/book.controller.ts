@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express"; // Importe os tipos Request e Response
-import mongoose from "mongoose";
 import authorModel from "../infra/models/author";
 import bookModel from "../infra/models/book";
 import { NotFoundError } from "../utils/customError";
@@ -47,11 +46,15 @@ class BookController {
 	static async updateBook(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const bookId = req.params.id;
+
 			const author = await authorModel.findById(req.body.author);
-			if (!bookId || author) {
-				throw new mongoose.Error.ValidationError();
+			if (!author) {
+				throw new NotFoundError(`Não foi possível atualizar o livro ${bookId} pois o autor passado não existe`);
 			}
 			const book = await bookModel.findByIdAndUpdate(bookId, { ...req.body, author: author });
+			if (!book) {
+				throw new NotFoundError(`Não foi possível atualizar o livro ${bookId} pois ele não existe`);
+			}
 			res.status(200).json(book);
 		} catch (error) {
 			next(error);

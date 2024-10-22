@@ -26,6 +26,7 @@ class ErrorHandler {
 			message: ERROR_MESSAGES.INTERNAL_ERROR,
 			detailedMessage: `Invalid Data provided: ${error}`,
 		};
+		console.log(error);
 		res.status(500).json(errorData);
 		next(error);
 	}
@@ -34,7 +35,7 @@ class ErrorHandler {
 		const errorData: IErrorMessage = {
 			code: ERROR_CODES.BAD_REQUEST,
 			message: ERROR_MESSAGES.INVALID_DATA_FORMAT,
-			detailedMessage: `Os dados passados são inválidos: ${error.value}`,
+			detailedMessage: `Os dados '${error.value}' passados são inválidos - ${error.reason}.`,
 		};
 		res.status(400).json(errorData);
 	}
@@ -53,7 +54,7 @@ class ErrorHandler {
 	private static handleCustomNotFoundError(error: customError.NotFoundError, res: Response) {
 		const errorData: IErrorMessage = {
 			code: ERROR_CODES.NOT_FOUND,
-			message: error.message || ERROR_MESSAGES.NOT_FOUND,
+			message: error.message,
 			detailedMessage: `Os dados passados estão faltando: ${error.message}`,
 		};
 		res.status(400).json(errorData);
