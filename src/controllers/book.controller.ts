@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express"; // Importe os tipos Request e Response
-import authorModel from "../infra/models/author";
-import bookModel from "../infra/models/book";
+import { authorModel, bookModel } from "../infra/models/";
 import { NotFoundError } from "../utils/customError";
 
 class BookController {

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"; // Importe os tipos Request e Response
-import authorModel from "../infra/models/author";
+import { authorModel } from "../infra/models/";
 
 class AuthorController {
 	static async getAuthors(req: Request, res: Response, next: NextFunction): Promise<void> {
