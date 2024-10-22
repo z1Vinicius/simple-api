@@ -1,31 +1,25 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { IErrorMessage } from "../types/error_handler";
+import * as customError from "../utils/customError";
+import { ERROR_CODES, ERROR_MESSAGES } from "../utils/customError";
 
 enum ErrorTypes {
 	MongooseCastError = "handleMongooseCastError",
 	MongooseCastValidationError = "handleMongooseValidationError",
+	NotFoundError = "handleCustomNotFoundError",
 }
 
-const ERROR_CODES = {
-	BAD_REQUEST: "bad_request",
-	INTERNAL_ERROR: "internal_error",
-	VALIDATION_ERROR: "invalid_data",
-};
-
-const ERROR_MESSAGES = {
-	INVALID_DATA_FORMAT: "Formato de dados inválidos",
-	INTERNAL_ERROR: "A requisição não foi processada devido a um erro interno do servidor",
-};
-
 class ErrorHandler {
-	static handleError(error: Error, req: Request, res: Response, next: NextFunction) {
-		console.log(error.name);
+	public static handleError(error: Error, req: Request, res: Response, next: NextFunction) {
 		if (error instanceof mongoose.Error.CastError) {
 			return ErrorHandler[ErrorTypes.MongooseCastError](error, res);
 		}
 		if (error instanceof mongoose.Error.ValidationError) {
 			return ErrorHandler[ErrorTypes.MongooseCastValidationError](error, res);
+		}
+		if (error instanceof customError.NotFoundError) {
+			return ErrorHandler[ErrorTypes.NotFoundError](error, res);
 		}
 		const errorData: IErrorMessage = {
 			code: ERROR_CODES.INTERNAL_ERROR,
@@ -54,6 +48,24 @@ class ErrorHandler {
 			details: errorMessage,
 		};
 		res.status(400).json(errorData);
+	}
+
+	private static handleCustomNotFoundError(error: customError.NotFoundError, res: Response) {
+		const errorData: IErrorMessage = {
+			code: ERROR_CODES.NOT_FOUND,
+			message: error.message || ERROR_MESSAGES.NOT_FOUND,
+			detailedMessage: `Os dados passados estão faltando: ${error.message}`,
+		};
+		res.status(400).json(errorData);
+	}
+
+	public static pageNotFoundHandler(req: Request, res: Response, next: NextFunction) {
+		const notFound: IErrorMessage = {
+			code: ERROR_CODES.NOT_FOUND,
+			message: ERROR_MESSAGES.NOT_FOUND,
+			detailedMessage: "Não foi possível encontrar a página solicitada",
+		};
+		res.status(400).send(notFound);
 	}
 }
 

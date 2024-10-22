@@ -5,11 +5,8 @@ import routes from "./routes";
 
 connection;
 const app = express();
-// app.use((req, res, next) => {
-// 	console.log("Nova requisição");
-// 	next();
-// });
 routes(app);
 app.use(ErrorHandler.handleError);
+app.use(ErrorHandler.pageNotFoundHandler);
 
 export default app;

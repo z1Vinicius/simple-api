@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express"; // Importe os tipos R
 import mongoose from "mongoose";
 import authorModel from "../infra/models/author";
 import bookModel from "../infra/models/book";
+import { NotFoundError } from "../utils/customError";
 
 class BookController {
 	static async getBooks(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -24,8 +25,7 @@ class BookController {
 			const bookId = req.params.id;
 			const book = await bookModel.findById(bookId);
 			if (!book) {
-				const bookError = { code: "not_found", message: "Book not found", detailedMessage: `Not able to find a book with id: ${bookId}` };
-				res.status(404).send(bookError);
+				throw new NotFoundError("Livro não encontrado");
 			}
 			res.status(200).json(book);
 		} catch (error) {
