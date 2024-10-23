@@ -6,7 +6,6 @@ class AuthorController {
 		try {
 			const allAuthors = authorModel.find();
 			req.result = allAuthors;
-			console.log("Próximo");
 			next();
 		} catch (error) {
 			next(error);

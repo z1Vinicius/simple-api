@@ -5,7 +5,7 @@ import { NotFoundError } from "../utils/customError";
 class BookController {
 	static async getBooks(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const allBooks = bookModel.find().populate("author");
+			const allBooks = bookModel.find();
 			req.result = allBooks;
 			next();
 		} catch (error) {
