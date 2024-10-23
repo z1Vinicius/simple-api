@@ -4,8 +4,10 @@ import { authorModel } from "../infra/models/";
 class AuthorController {
 	static async getAuthors(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const allAuthors = await authorModel.find();
-			res.status(200).json(allAuthors);
+			const allAuthors = authorModel.find();
+			req.result = allAuthors;
+			console.log("Próximo");
+			next();
 		} catch (error) {
 			next(error);
 		}
