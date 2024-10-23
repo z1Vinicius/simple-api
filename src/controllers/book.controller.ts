@@ -5,25 +5,12 @@ import { NotFoundError } from "../utils/customError";
 class BookController {
 	static async getBooks(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const { id, pages, price, publisher, title } = req.query;
+			const bookQuery = (req.query.all as Record<string, any>) || {};
+			const allBooks = await bookModel.find(bookQuery).populate("author");
 
-			const regex = new RegExp(publisher as string, "i");
-			const filterQuery: any = {};
-			if (id) filterQuery._id = id;
-			if (pages) filterQuery.pages = { $gte: pages };
-			if (price) filterQuery.price = price;
-			if (publisher) filterQuery.publisher = regex;
-			if (title) filterQuery.title = { $regex: title, $options: "i" };
-
-			let allBooks = {};
-			if (req.query) {
-				allBooks = await bookModel.find(filterQuery);
-			} else {
-				allBooks = await bookModel.find({});
-			}
 			res.status(200).json(allBooks);
 		} catch (error) {
-			next(error);
+			next(error); // Passa o erro ao middleware de tratamento de erros
 		}
 	}
 
@@ -43,7 +30,10 @@ class BookController {
 	static async createBook(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const author = await authorModel.findById(req.body.author);
-			const book = new bookModel({ ...req.body, author: author });
+			if (!author) {
+				throw new NotFoundError("Autor não encontrado");
+			}
+			const book = new bookModel({ ...req.body, author: author._id });
 			await book.save();
 			res.status(200).json(book);
 		} catch (error) {
