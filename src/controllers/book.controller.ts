@@ -6,23 +6,23 @@ class BookController {
 	static async getBooks(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const bookQuery = (req.query.all as Record<string, any>) || {};
-			let { page = 1, limit = 5, orderBy = "_id", orderType = 0 } = req.query;
+			let { page = 1, limit = 5, orderBy = "_id:asc" } = req.query;
 			page = Number(page);
 			limit = Number(limit);
-			orderType = Number(orderType);
 
 			if (page <= 0 || limit <= 0 || limit >= 200) {
 				throw new PaginationError("Os parâmetros de paginação são inválidos");
 			}
-			const validOrderFields = ["_id", "title", "author", "publishedDate"]; // Add other valid fields from your schema
-			if (!validOrderFields.includes(orderBy as string)) {
-				orderBy = "_id";
+
+			let [orderByValue, orderType] = new String(orderBy).split(":");
+			const validOrderFields = ["_id", "title", "publishedDate"];
+			if (!validOrderFields.includes(orderByValue as string)) {
+				orderByValue = "_id";
 			}
-			console.log(orderType);
 
 			const allBooks = await bookModel
 				.find(bookQuery)
-				.sort({ [orderBy as string]: orderType ? "asc" : "desc" })
+				.sort({ [orderByValue]: orderType === "1" ? "asc" : "desc" })
 				.skip((page - 1) * limit)
 				.limit(limit)
 				.populate("author");
