@@ -8,6 +8,7 @@ enum ErrorTypes {
 	MongooseCastError = "handleMongooseCastError",
 	MongooseCastValidationError = "handleMongooseValidationError",
 	NotFoundError = "handleCustomNotFoundError",
+	PaginationError = "handleCustomPaginationError",
 }
 
 class ErrorHandler {
@@ -20,6 +21,9 @@ class ErrorHandler {
 		}
 		if (error instanceof customError.NotFoundError) {
 			return ErrorHandler[ErrorTypes.NotFoundError](error, res);
+		}
+		if (error instanceof customError.PaginationError) {
+			return ErrorHandler[ErrorTypes.PaginationError](error, res);
 		}
 		const errorData: IErrorMessage = {
 			code: ERROR_CODES.INTERNAL_ERROR,
@@ -58,6 +62,15 @@ class ErrorHandler {
 			detailedMessage: `Os dados passados estão faltando: ${error.message}`,
 		};
 		res.status(400).json(errorData);
+	}
+
+	private static handleCustomPaginationError(error: customError.NotFoundError, res: Response) {
+		const notFound: IErrorMessage = {
+			code: ERROR_CODES.BAD_REQUEST,
+			message: ERROR_MESSAGES.INVALID_DATA_FORMAT,
+			detailedMessage: error.message,
+		};
+		res.status(400).send(notFound);
 	}
 
 	public static pageNotFoundHandler(req: Request, res: Response, next: NextFunction) {

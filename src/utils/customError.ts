@@ -26,3 +26,11 @@ export class MissingParamsError extends Error {
 		this.name = ERROR_CODES.NOT_FOUND;
 	}
 }
+
+export class PaginationError extends Error {
+	constructor(message: string = "Os parâmetros passados para a paginação são inválidos") {
+		super();
+		this.message = message;
+		this.name = ERROR_CODES.NOT_FOUND;
+	}
+}

@@ -1,16 +1,35 @@
 import { NextFunction, Request, Response } from "express"; // Importe os tipos Request e Response
 import { authorModel, bookModel } from "../infra/models/";
-import { NotFoundError } from "../utils/customError";
+import { NotFoundError, PaginationError } from "../utils/customError";
 
 class BookController {
 	static async getBooks(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const bookQuery = (req.query.all as Record<string, any>) || {};
-			const allBooks = await bookModel.find(bookQuery).populate("author");
+			let { page = 1, limit = 5, orderBy = "_id", orderType = 0 } = req.query;
+			page = Number(page);
+			limit = Number(limit);
+			orderType = Number(orderType);
+
+			if (page <= 0 || limit <= 0 || limit >= 200) {
+				throw new PaginationError("Os parâmetros de paginação são inválidos");
+			}
+			const validOrderFields = ["_id", "title", "author", "publishedDate"]; // Add other valid fields from your schema
+			if (!validOrderFields.includes(orderBy as string)) {
+				orderBy = "_id";
+			}
+			console.log(orderType);
+
+			const allBooks = await bookModel
+				.find(bookQuery)
+				.sort({ [orderBy as string]: orderType ? "asc" : "desc" })
+				.skip((page - 1) * limit)
+				.limit(limit)
+				.populate("author");
 
 			res.status(200).json(allBooks);
 		} catch (error) {
-			next(error); // Passa o erro ao middleware de tratamento de erros
+			next(error);
 		}
 	}
 
